@@ -1,9 +1,11 @@
 import React from "react";
 import Base from "../Base/Base";
 import { useHistory } from 'react-router-dom'
+import { AppStates } from "../Context/AppProvider";
 
 
-function Teachersprofiles({ data, setData, setInd }) {
+function Teachersprofiles() {
+    const {data2,setData2,ind,setInd}=AppStates();
 
     const history = useHistory();
 
@@ -15,11 +17,11 @@ function Teachersprofiles({ data, setData, setInd }) {
         })
 
 
-        const data2=await response.json();
+        const newdata=await response.json();
         console.log(data2)
         
         
-        setData(data.filter((ele, inx) => ele.id != id))
+        setData2(data2.filter((ele, inx) => ele.id != id))
 
 
     }
@@ -65,7 +67,7 @@ function Teachersprofiles({ data, setData, setInd }) {
                             </tr>
 
                             {
-                                data.map((ele, ind) => (
+                                data2.map((ele, ind) => (
                                     <tr key={ind}>
                                         <td>{ind + 1}</td>
                                         <td>{ele.name}</td>
@@ -85,7 +87,7 @@ function Teachersprofiles({ data, setData, setInd }) {
 
 
                                                 {/* Delete */}
-                                                <button className="btn btn-danger" onClick={() =>deleteStudent(data[ind].id)}>Delete</button>
+                                                <button className="btn btn-danger" onClick={() =>deleteStudent(data2[ind].id)}>Delete</button>
 
 
 

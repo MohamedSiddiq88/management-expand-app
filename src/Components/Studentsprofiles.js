@@ -1,9 +1,12 @@
 import React from "react";
 import Base from "../Base/Base";
 import { useHistory } from 'react-router-dom'
+import { AppStates } from "../Context/AppProvider";
 
 
-function Studentsprofiles({ data, setData, setInd }) {
+function Studentsprofiles() {
+    
+    const {data,setData,data2,setData2,ind,setInd}=AppStates();
     const history = useHistory();
 
     async function deleteStudent(id) {
