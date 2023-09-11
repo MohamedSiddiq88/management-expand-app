@@ -21,7 +21,7 @@ import { AppStates } from "../Context/AppProvider";
 function Add() {
   const {data,setData}=AppStates();
 
-  const {handleSubmit, values, handleChange,handleBlur,touched,errors}=useFormik({
+  const {handleSubmit, values, handleChange,handleBlur,touched,errors, resetForm }=useFormik({
     initialValues:{
       name:"",
       age:"",
@@ -31,7 +31,6 @@ function Add() {
     },
     validationSchema:fieldValidationSchema,
     onSubmit:(newStudentData)=>{
-      console.log("onsubmit",newStudentData)
       createStudent(newStudentData)
     }
   })
@@ -48,12 +47,17 @@ function Add() {
         "content-Type":"application/json" 
       }
     })
-
-    const data2=await response.json();
-
-    
-
-    setData([...data, data2])
+    if (response.ok) {
+      const data2 = await response.json();
+      setData([...data, data2]);
+      resetForm();
+      
+      //when data is added successfully
+      window.alert("Data added successfully!");
+    } else {
+      //where adding data failed (ex: network error)
+      window.alert("Failed to add data. Please try again later.");
+    }
   }
 
   return (
@@ -121,7 +125,7 @@ function Add() {
                 placeholder="Enter the Class"
                 name="class"
                 type="class"
-                value={values.clas}
+                value={values.class}
                 onChange={handleChange}
                 onBlur={handleBlur}
               />

@@ -10,7 +10,7 @@ import { AppStates } from "../Context/AppProvider";
  //field validation
  export const fieldValidationSchema=yup.object({
   name:yup.string().required("Please enter the Name"),
-  age:yup.number().required("Please enter the Age").min(21,"Please Enter Valid Age minimum Age is 21").max(40,"Please Enter Valid Age maximum Age is 50"),
+  age:yup.number().required("Please enter the Age").min(21,"Please Enter Valid Age minimum Age is 21").max(50,"Please Enter Valid Age maximum Age is 50"),
   gender:yup.string().required("Please enter the Gender"),
   subject:yup.string().required("Please enter the Subject"),
   bloodGroup:yup.string().required("Please enter the Blood Group")
@@ -21,7 +21,7 @@ function AddTeacher() {
 
   const {data2,setData2}=AppStates();
 
-  const {handleSubmit, values, handleChange,handleBlur,touched,errors}=useFormik({
+  const {handleSubmit, values, handleChange,handleBlur,touched,errors, resetForm}=useFormik({
     initialValues:{
       name:"",
       age:"",
@@ -31,7 +31,6 @@ function AddTeacher() {
     },
     validationSchema:fieldValidationSchema,
     onSubmit:(newTeacherData)=>{
-      console.log("onsubmit",newTeacherData)
       createTeacher(newTeacherData)
     }
   })
@@ -48,9 +47,20 @@ function AddTeacher() {
       }
     })
 
-    const newdata=await response.json();
 
-    setData2([...data2, newdata])
+    if (response.ok) {
+      const newdata=await response.json();
+      setData2([...data2, newdata]);
+      resetForm();
+      
+      //when data is added successfully
+      window.alert("Data added successfully!");
+    } else {
+      //where adding data failed (ex: network error)
+      window.alert("Failed to add data. Please try again later.");
+    }
+
+
   }
 
   return (
