@@ -52,7 +52,6 @@ tr:nth-child(even){
     position: fixed;
     left: 0px;
     height: 100vh;
-    overflow: scroll;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;

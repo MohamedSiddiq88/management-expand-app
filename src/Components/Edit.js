@@ -1,55 +1,75 @@
 import React from "react";
 import Base from "../Base/Base";
 import "./Add.css"
-import { useState } from "react";
 import { useEffect } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { TextField } from "@mui/material";
+import { AppStates } from "../Context/AppProvider";
+import * as yup from 'yup';
+import { useFormik } from "formik";
 
-function Edit({ ind, setInd, data, setData }) {
+
+
+
+//field validation
+export const fieldValidationSchema=yup.object({
+  name:yup.string().required("Please enter the Name"),
+  age:yup.number().required("Please enter the Age").min(15,"Please Enter Valid Age minimum Age is 15").max(24,"Please Enter Valid Age maximum Age is 24"),
+  gender:yup.string().required("Please enter the Gender"),
+  clas:yup.string().required("Please enter the Class"),
+  bloodGroup:yup.string().required("Please enter the Blood Group")
+})
+
+
+function Edit() {
+  const {data,setData,ind,setInd}=AppStates();
+
+  const {handleSubmit, values,setValues, handleChange,handleBlur,touched,errors}=useFormik({
+    initialValues:{
+      name:"",
+      age:"",
+      gender:"", 
+      clas:"",
+      bloodGroup:""
+    },
+    validationSchema:fieldValidationSchema,
+    onSubmit:(newStudentData)=>{
+      console.log("onsubmit",newStudentData)
+      studentUpdate(newStudentData)
+    }
+  })
 
   const history = useHistory();
-  // console.log(ind);
-  // console.log(`App ind ${data[ind].name}`)
-
-
-  const [name, setName] = useState("")
-  const [age, setAge] = useState("")
-  const [gender, setGender] = useState("")
-  const [clas, setClas] = useState("")
-  const [bloodgroup, setBloodGroup] = useState("")
-
-
 
   useEffect(() => {
     const editStudent = data[ind]
-    setName(editStudent.name)
-    setAge(editStudent.age)
-    setGender(editStudent.gender)
-    setClas(editStudent.class)
-    setBloodGroup(editStudent.bloodGroup)
+    setValues({
+      id:editStudent.id,
+      name:  editStudent.name,
+      age:editStudent.age,
+      gender:editStudent.gender,
+      clas:editStudent.class,
+      bloodGroup:editStudent.bloodGroup
+    })
+
   }, [data, ind])
 
-async  function onUpdate1(event) {
+async  function studentUpdate(newStudentData) {
 
-
-
-
-    event.preventDefault();
 
 
     const editedData={
-      name : name,
-      age : age,
-      gender : gender,
-      class : clas,
-      bloodGroup : bloodgroup
+      name : values.name,
+      age : values.age,
+      gender : values.gender,
+      class : values.clas,
+      bloodGroup : values.bloodGroup
     }
     data[ind]=editedData;
 
-    const response=await fetch(`https://645899734eb3f674df7800be.mockapi.io/students/${ind}`, {
+    const response=await fetch(`https://645899734eb3f674df7800be.mockapi.io/students/${values.id}`, {
       method:"PUT",
-      body:JSON.stringify(editedData),
+      body:JSON.stringify(newStudentData),
       headers:{
         "content-Type":"application/json"
       }
@@ -58,7 +78,6 @@ async  function onUpdate1(event) {
     
 
     const data2=await response.json();
-    console.log(`data2 ${data2.name}`)
       if(data2){
         console.log(data2);
         setData([...data]);
@@ -83,63 +102,77 @@ async  function onUpdate1(event) {
 
           <div className="col-12">
             {/* col add-form*/}
-            <form className="container add-form" onSubmit={(e) => (onUpdate1(e))}>
+            <form className="container add-form" onSubmit={handleSubmit}>
               <h1 className="add-heading"><b>Edit Student's Data</b></h1>
               
               
               <TextField
                 fullWidth
-                id="fullWidth outlined-required"
-                required
                 placeholder="Enter the Name"
                 name="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                type="name"
+                value={values.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className="textField"
               />
+              <div style={{color:"red"}}>{touched.name && errors.name ? errors.name : ""}</div>
+              
+
 
               <TextField
                 fullWidth
-                id="fullWidth outlined-required"
-                required
                 placeholder="Enter the Age"
                 name="age"
-                type="number"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
+                type="age"
+                value={values.age}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className="textField"
               />
+              <div style={{color:"red"}}>{touched.age && errors.age  ? errors.age : ""}</div>
+              
 
 
               <TextField
                 fullWidth
-                id="fullWidth outlined-required"
-                required
                 placeholder="Enter the Gender"
                 name="gender"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
+                type="gender"
+                value={values.gender}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className="textField"
               />
+              <div style={{color:"red"}}>{touched.gender && errors.gender  ? errors.gender : ""}</div>
+              
 
 
               <TextField
                 fullWidth
-                id="fullWidth outlined-required"
-                required
                 placeholder="Enter the Class"
-                name="class"
-                value={clas}
-                onChange={(e) => setClas(e.target.value)}
+                name="clas"
+                type="clas"
+                value={values.clas}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className="textField"
               />
+              <div style={{color:"red"}}>{touched.clas && errors.clas  ? errors.clas : ""}</div>
+              
 
               <TextField
                 fullWidth
-                id="fullWidth outlined-required"
-                required
                 placeholder="Enter the Blood Group"
-                name="bloodgroup"
-                value={bloodgroup}
-                onChange={(e) => setBloodGroup(e.target.value)}
+                name="bloodGroup"
+                type="bloodGroup"
+                value={values.bloodGroup}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className="textField"
               />
-
+              <div style={{color:"red"}}>{touched.bloodGroup && errors.bloodGroup  ? errors.bloodGroup : ""}</div>
+              
 
               
 

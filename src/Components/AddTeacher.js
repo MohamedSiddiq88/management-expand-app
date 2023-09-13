@@ -2,36 +2,65 @@ import React from "react";
 import Base from "../Base/Base";
 import "./Add.css";
 import { TextField } from "@mui/material";
+import * as yup from 'yup';
+import { useFormik } from "formik";
+import { AppStates } from "../Context/AppProvider";
 
 
+ //field validation
+ export const fieldValidationSchema=yup.object({
+  name:yup.string().required("Please enter the Name"),
+  age:yup.number().required("Please enter the Age").min(21,"Please Enter Valid Age minimum Age is 21").max(50,"Please Enter Valid Age maximum Age is 50"),
+  gender:yup.string().required("Please enter the Gender"),
+  subject:yup.string().required("Please enter the Subject"),
+  bloodGroup:yup.string().required("Please enter the Blood Group")
+})
 
-function AddTeacher({ data, setData }) {
+
+function AddTeacher() {
+
+  const {data2,setData2}=AppStates();
+
+  const {handleSubmit, values, handleChange,handleBlur,touched,errors, resetForm}=useFormik({
+    initialValues:{
+      name:"",
+      age:"",
+      gender:"", 
+      subject:"",
+      bloodGroup:""
+    },
+    validationSchema:fieldValidationSchema,
+    onSubmit:(newTeacherData)=>{
+      createTeacher(newTeacherData)
+    }
+  })
 
   // to ahndel onsubmit
-  const handelsubmit = async(event) => {
-    console.log(data)
-    event.preventDefault();
-    const name = event.target.name.value;
-    const age = event.target.age.value;
-    const gender = event.target.gender.value;
-    const subject = event.target.subject.value;
-    const bloodgroup = event.target.bloodgroup.value;
-
+  const createTeacher = async(newTeacherData) => {
+  
      //fetch data
      const response=await fetch("https://645899734eb3f674df7800be.mockapi.io/teachers", {
       method:"POST",
-      body:JSON.stringify({ name, age, gender, subject, bloodGroup: bloodgroup }),
+      body:JSON.stringify(newTeacherData),
       headers:{
         "content-Type":"application/json"
       }
     })
 
-    const data2=await response.json();
 
-    setData([...data, data2])
+    if (response.ok) {
+      const newdata=await response.json();
+      setData2([...data2, newdata]);
+      resetForm();
+      
+      //when data is added successfully
+      window.alert("Data added successfully!");
+    } else {
+      //where adding data failed (ex: network error)
+      window.alert("Failed to add data. Please try again later.");
+    }
 
-    // to claear all field after updating
-    event.target.reset();
+
   }
 
   return (
@@ -51,52 +80,76 @@ function AddTeacher({ data, setData }) {
 
           {/* col add-form*/}
           <div className="col-12">
-          <form className="container-fluid add-form" onSubmit={handelsubmit}>
+          <form className="container-fluid add-form" onSubmit={handleSubmit}>
             <h1 className="add-heading"><b>Add Teacher's Data</b></h1>
             
 
             <TextField
                 fullWidth
-                id="fullWidth outlined-required"
-                required
                 placeholder="Enter the Name"
                 name="name"
+                type="name"
+                value={values.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className="textField"
               />
+              <div style={{color:"red"}}>{touched.name && errors.name ? errors.name : ""}</div>
+              
 
               <TextField
                 fullWidth
-                id="fullWidth outlined-required"
-                required
                 placeholder="Enter the Age"
                 name="age"
-                type="number"
+                type="age"
+                value={values.age}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className="textField"
               />
+              <div style={{color:"red"}}>{touched.age && errors.age  ? errors.age : ""}</div>
+              
 
 
               <TextField
                 fullWidth
-                id="fullWidth outlined-required"
-                required
                 placeholder="Enter the Gender"
                 name="gender"
+                type="gender"
+                value={values.gender}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className="textField"
               />
+              <div style={{color:"red"}}>{touched.gender && errors.gender  ? errors.gender : ""}</div>
+              
 
 
               <TextField
                 fullWidth
-                id="fullWidth outlined-required"
-                required
                 placeholder="Enter the Subject"
                 name="subject"
+                type="subject"
+                value={values.subject}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className="textField"
               />
+              <div style={{color:"red"}}>{touched.subject && errors.subject  ? errors.subject : ""}</div>
+              
 
               <TextField
                 fullWidth
-                id="fullWidth outlined-required"
-                required
                 placeholder="Enter the Blood Group"
-                name="bloodgroup"
+                name="bloodGroup"
+                type="bloodGroup"
+                value={values.bloodGroup}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className="textField"
               />
+              <div style={{color:"red"}}>{touched.bloodGroup && errors.bloodGroup  ? errors.bloodGroup : ""}</div>
+              
 
 
 

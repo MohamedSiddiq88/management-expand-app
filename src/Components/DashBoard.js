@@ -1,8 +1,9 @@
 import Base from "../Base/Base";
+import { AppStates } from "../Context/AppProvider";
 import "./Add.css";
 
-function DashBoard({ stuData, techData }) {
-
+function DashBoard() {
+    const {data,data2}=AppStates();
     return (
         <Base
             heading={"Dashboard"}
@@ -17,7 +18,7 @@ function DashBoard({ stuData, techData }) {
                     <div className="col-6">
                         <div className="card">
                             <h1 className="length">
-                                {stuData.length}
+                                {data.length}
                             </h1>
                             <h1 className="lengthof">
                                 Students
@@ -27,7 +28,7 @@ function DashBoard({ stuData, techData }) {
                     <div className="col-6">
                         <div className="card">
                             <h1 className="length">
-                                {techData.length}
+                                {data2.length}
                             </h1>
                             <h1 className="lengthof">
                                 Teachers
